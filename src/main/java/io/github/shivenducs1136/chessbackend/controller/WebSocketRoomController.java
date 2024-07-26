@@ -3,6 +3,7 @@ package io.github.shivenducs1136.chessbackend.controller;
 import io.github.shivenducs1136.chessbackend.model.roomModel.JoinResponse;
 import io.github.shivenducs1136.chessbackend.model.roomModel.LeaveMessage;
 import io.github.shivenducs1136.chessbackend.model.roomModel.LeaveResponse;
+import io.github.shivenducs1136.chessbackend.service.ChessService;
 import io.github.shivenducs1136.chessbackend.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -40,11 +41,14 @@ public class WebSocketRoomController {
         }
         return "false";
     }
-
     @MessageMapping("/leave")
     public void leaveRoom(LeaveMessage message, SimpMessageHeaderAccessor headerAccessor) {
         String sessionId = headerAccessor.getSessionId();
         roomService.removeConnectionFromRoom(message.getRoomId(), sessionId);
         messagingTemplate.convertAndSend("/topic/leave/"+message.getRoomId(), new LeaveResponse("Left room: " + message.getRoomId()));
+    }
+    @MessageMapping("/end/{roomId}")
+    public void endRoom(@DestinationVariable String roomId) {
+        roomService.removeRoom(roomId);
     }
 }

@@ -36,10 +36,16 @@ public class WebSocketChessController {
         return chessService.movePiece(roomId,cm);
     }
 
-
     @MessageMapping("/game/killedPieces/{roomId}")
     @SendTo("/topic/game/killedPieces/{roomId}")
     public List<String> getKilledPieces(@DestinationVariable String roomId){
         return chessService.getKilledPieces(roomId);
     }
+
+    @MessageMapping("/game/currentChance/{roomId}")
+    @SendTo("/topic/game/currentChance/{roomId}")
+    public String getCurrentPlayerChance(@DestinationVariable String roomId){
+        return chessService.getCurrentChance(roomId);
+    }
+
 }

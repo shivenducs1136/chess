@@ -3,6 +3,7 @@ package io.github.shivenducs1136.chessbackend.service;
 import ch.qos.logback.core.joran.sanity.Pair;
 import lombok.Getter;
 import org.slf4j.event.KeyValuePair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,6 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class RoomService {
+
+
+    @Autowired
+    private ChessService chessService;
 
     @Getter
     private final Map<String, Set<String>> rooms = new ConcurrentHashMap<>();
@@ -36,13 +41,13 @@ public class RoomService {
             return addConnectionToRoom(sessionId);
         }
     }
-
     public void removeConnectionFromRoom(String roomId, String sessionId) {
         Set<String> connections = rooms.get(roomId);
         if (connections != null) {
             connections.remove(sessionId);
             if (connections.isEmpty()) {
                 rooms.remove(roomId);
+                chessService.removeChessEngine(roomId);
             }
         }
     }
@@ -61,6 +66,13 @@ public class RoomService {
         }
         else{
             return false;
+        }
+    }
+
+    public void removeRoom(String roomId) {
+        if(rooms.containsKey(roomId)){
+            rooms.remove(roomId);
+            chessService.removeChessEngine(roomId);
         }
     }
 }

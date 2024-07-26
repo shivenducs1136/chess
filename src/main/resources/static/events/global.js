@@ -26,6 +26,10 @@ function globalEvent(){
     window.addEventListener('beforeunload',function(e){
         stompClient.send('/app/leave',{},JSON.stringify({roomId}));
     });
+    const btn = document.getElementById("alertBtn"); 
+    btn.addEventListener("click",function(){
+        window.location.reload(true);
+    });
 }
 
 export {globalEvent};
