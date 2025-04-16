@@ -17,18 +17,8 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '21'
-        distribution: 'temurin'
+        distribution: 'amazoncorretto'
         cache: maven
-    - shell: bash
-      env:
-        SUPER_SECRET: ${{ secrets.EMAIL }}
-      run: |
-          echo "user.email=$SUPER_SECRET" >> src/main/resources/application.properties
-    - shell: bash
-      env:
-        SUPER_SECRET: ${{ secrets.PASSWORD }}
-      run: |
-          echo "user.password=$SUPER_SECRET" >> src/main/resources/application.properties
     - name: Maven clean install 
       run: mvn clean install >> mvn.txt
     - name: Build the Docker image
