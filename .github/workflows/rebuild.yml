@@ -20,7 +20,9 @@ jobs:
         distribution: 'corretto'
         cache: maven
     - name: Maven clean install 
-      run: mvn clean install >> mvn.txt
+      run: |
+            mvn clean install >> mvn.txt
+            cat mvn.txt
     - name: Build the Docker image
       run: docker build -t chessgame:$(date +%s) -f Dockerfile .
     - name: Login to Docker Hub
