@@ -19,10 +19,49 @@ jobs:
         java-version: '21'
         distribution: 'corretto'
         cache: maven
-    - name: Maven clean install 
+    - name: Set custom Maven settings.xml
       run: |
-            mvn clean install >> mvn.txt
-            cat mvn.txt
+            mkdir -p $HOME/.m2
+            cat > $HOME/.m2/settings.xml <<EOF
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                  http://maven.apache.org/xsd/settings-1.0.0.xsd">
+            
+              <activeProfiles>
+                <activeProfile>github</activeProfile>
+              </activeProfiles>
+            
+              <profiles>
+                <profile>
+                  <id>github</id>
+                  <repositories>
+                    <repository>
+                      <id>central</id>
+                      <url>https://repo1.maven.org/maven2</url>
+                    </repository>
+                    <repository>
+                      <id>github</id>
+                      <url>https://maven.pkg.github.com/shivenducs1136/chessgame</url>
+                      <snapshots>
+                        <enabled>true</enabled>
+                      </snapshots>
+                    </repository>
+                  </repositories>
+                </profile>
+              </profiles>
+            
+              <servers>
+                <server>
+              <id>github</id>
+                  <username>shivenducs1136</username>
+                  <password>${{ secrets.PASSWORD }}</password>
+                </server>
+              </servers>
+            </settings>
+            EOF
+    - name: Maven clean install 
+      run: mvn clean install
     - name: Build the Docker image
       run: docker build -t chessgame:$(date +%s) -f Dockerfile .
     - name: Login to Docker Hub
